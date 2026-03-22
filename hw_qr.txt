@@ -1,0 +1,161 @@
+1)
+Tasks.objects.create(name="Store",priority="3",description="Buy bread, milk, eggs")
+и т.д.
+
+2)
+In [51]: Tasks.objects.all()
+Out[51]: SELECT "tasks"."id",
+       "tasks"."name",
+       "tasks"."description",
+       "tasks"."priority",
+       "tasks"."status",
+       "tasks"."is_reopened",
+       "tasks"."created_at",
+       "tasks"."updated_at"
+  FROM "tasks"
+ ORDER BY "tasks"."priority" DESC,
+          "tasks"."created_at" DESC
+ LIMIT 21
+
+Execution time: 0.000280s [Database: default]
+<QuerySet [<Tasks: Store>, <Tasks: Meeting with the client>, <Tasks: Become a python developer>, <Tasks: Tires>, <Tasks: Cook food>, <Tasks: Fix car>, <Tasks: Buy gift for my wife birthday>, <Tasks: Play football>, <Tasks: Clean my room>, <Tasks: Read>]>
+
+
+3)
+In [55]: Tasks.objects.values("name","status")
+Out[55]: SELECT "tasks"."name" AS "name",
+       "tasks"."status" AS "status"
+  FROM "tasks"
+ ORDER BY "tasks"."priority" DESC,
+          "tasks"."created_at" DESC
+ LIMIT 21
+
+Execution time: 0.000229s [Database: default]
+<QuerySet [{'name': 'Store', 'status': 'COMPLETED'}, {'name': 'Meeting with the client', 'status': 'CANCELED'}, {'name': 'Become a python developer', 'status': 'STARTED'}, {'name': 'Tires', 'status': 'CREATED'}, {'name': 'Cook food', 'status': 'CREATED'}, {'name': 'Fix car', 'status': 'COMPLETED'}, {'name': 'Buy gift for my wife birthday', 'status': 'FAILED'}, {'name': 'Play football', 'status': 'COMPLETED'}, {'name': 'Clean my room', 'status': 'CREATED'}, {'name': 'Read', 'status': 'STARTED'}]>
+
+
+4)
+In [49]: Tasks.objects.filter(Q(status="CREATED") | Q(status="STARTED"))
+Out[49]: SELECT "tasks"."id",
+       "tasks"."name",
+       "tasks"."description",
+       "tasks"."priority",
+       "tasks"."status",
+       "tasks"."is_reopened",
+       "tasks"."created_at",
+       "tasks"."updated_at"
+  FROM "tasks"
+ WHERE ("tasks"."status" = 'CREATED' OR "tasks"."status" = 'STARTED')
+ ORDER BY "tasks"."priority" DESC,
+          "tasks"."created_at" DESC
+ LIMIT 21
+
+Execution time: 0.000266s [Database: default]
+<QuerySet [<Tasks: Become a python developer>, <Tasks: Tires>, <Tasks: Cook food>, <Tasks: Clean my room>, <Tasks: Read>]>
+
+5)
+In [57]: Tasks.objects.filter(priority=5)
+Out[57]: SELECT "tasks"."id",
+       "tasks"."name",
+       "tasks"."description",
+       "tasks"."priority",
+       "tasks"."status",
+       "tasks"."is_reopened",
+       "tasks"."created_at",
+       "tasks"."updated_at"
+  FROM "tasks"
+ WHERE "tasks"."priority" = 5
+ ORDER BY "tasks"."priority" DESC,
+          "tasks"."created_at" DESC
+ LIMIT 21
+
+Execution time: 0.000295s [Database: default]
+<QuerySet [<Tasks: Store>, <Tasks: Meeting with the client>, <Tasks: Become a python developer>]>
+
+
+6)
+In [61]: Tasks.objects.filter(is_reopened="True")
+Out[61]: SELECT "tasks"."id",
+       "tasks"."name",
+       "tasks"."description",
+       "tasks"."priority",
+       "tasks"."status",
+       "tasks"."is_reopened",
+       "tasks"."created_at",
+       "tasks"."updated_at"
+  FROM "tasks"
+ WHERE "tasks"."is_reopened"
+ ORDER BY "tasks"."priority" DESC,
+          "tasks"."created_at" DESC
+ LIMIT 21
+
+Execution time: 0.000247s [Database: default]
+<QuerySet [<Tasks: Cook food>, <Tasks: Buy gift for my wife birthday>, <Tasks: Clean my room>]>
+
+7)
+In [64]: Tasks.objects.order_by('-priority')
+In [65]: Tasks.objects.order_by('created_at')
+
+8)
+In [65]: Tasks.objects.count()
+SELECT COUNT(*) AS "__count"
+  FROM "tasks"
+
+Execution time: 0.000282s [Database: default]
+Out[65]: 10
+
+9)
+In [66]: Tasks.objects.last()
+SELECT "tasks"."id",
+       "tasks"."name",
+       "tasks"."description",
+       "tasks"."priority",
+       "tasks"."status",
+       "tasks"."is_reopened",
+       "tasks"."created_at",
+       "tasks"."updated_at"
+  FROM "tasks"
+ ORDER BY "tasks"."priority" ASC,
+          "tasks"."created_at" ASC
+ LIMIT 1
+
+Execution time: 0.000272s [Database: default]
+Out[66]: <Tasks: Read>
+
+10)
+In [67]: Tasks.objects.filter(status="STARTED")
+Out[67]: SELECT "tasks"."id",
+       "tasks"."name",
+       "tasks"."description",
+       "tasks"."priority",
+       "tasks"."status",
+       "tasks"."is_reopened",
+       "tasks"."created_at",
+       "tasks"."updated_at"
+  FROM "tasks"
+ WHERE "tasks"."status" = 'STARTED'
+ ORDER BY "tasks"."priority" DESC,
+          "tasks"."created_at" DESC
+ LIMIT 21
+
+Execution time: 0.000257s [Database: default]
+<QuerySet [<Tasks: Become a python developer>, <Tasks: Read>]>
+
+11)
+In [70]: Tasks.objects.exclude(Q(description__isnull=True) | Q(description=''))
+Out[70]: SELECT "tasks"."id",
+       "tasks"."name",
+       "tasks"."description",
+       "tasks"."priority",
+       "tasks"."status",
+       "tasks"."is_reopened",
+       "tasks"."created_at",
+       "tasks"."updated_at"
+  FROM "tasks"
+ WHERE NOT (("tasks"."description" IS NULL OR ("tasks"."description" = '' AND "tasks"."description" IS NOT NULL)))
+ ORDER BY "tasks"."priority" DESC,
+          "tasks"."created_at" DESC
+ LIMIT 21
+
+Execution time: 0.000279s [Database: default]
+<QuerySet [<Tasks: Store>, <Tasks: Meeting with the client>, <Tasks: Become a python developer>, <Tasks: Tires>, <Tasks: Cook food>, <Tasks: Fix car>, <Tasks: Buy gift for my wife birthday>, <Tasks: Play football>, <Tasks: Clean my room>, <Tasks: Read>]>

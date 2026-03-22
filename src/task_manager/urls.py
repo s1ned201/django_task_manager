@@ -7,5 +7,4 @@ urlpatterns = [
     path('', task, name='tasks'),
     path('home', home, name='home'),
     path('user', user, name='user'),
-    # re_path(r'^details/(?P<task>[0-9]{4})/$', index_2),
 ]
