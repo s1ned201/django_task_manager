@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import environ
 import os
+
+from django.conf.global_settings import AUTH_USER_MODEL
+
 from config.env import env, BASE_DIR
 
 # False if not in os.environ because of casting above
@@ -38,6 +41,7 @@ INSTALLED_APPS = [
     'django_extensions',
     # app
     'task_manager',
+    'account'
 ]
 
 MIDDLEWARE = [
@@ -84,6 +88,7 @@ DATABASES = {
     },
 }
 
+AUTH_USER_MODEL = "account.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
