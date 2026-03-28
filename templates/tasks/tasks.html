@@ -9,7 +9,7 @@
   <thead>
     <tr>
       <th scope="col">Task Name</th>
-      <th scope="col">Description</th>
+      <th scope="col">Tags</th>
       <th scope="col">Status</th>
       <th scope="col">Priority</th>
     </tr>
@@ -18,7 +18,11 @@
   {% for task in tasks %}
     <tr>
       <td>{{ task.name}}</td>
-      <td>{{ task.description}}</td>
+      <td>
+        {% for tag in task.tags.all %}
+        {{ tag.name}}
+        {% endfor %}
+      </td>
       <td>{{ task.status}}</td>
       <td>{{ task.priority}}</td>
     </tr>

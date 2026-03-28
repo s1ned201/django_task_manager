@@ -70,4 +70,6 @@ class Tasks(BaseModel):
         return self.name
 
 
-
+class EducationTasks(Tasks):
+    class Meta:
+        proxy = True
