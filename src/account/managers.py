@@ -9,8 +9,8 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
-    def create_user(self, email, password):
-        return self._create_user(email, password)
+    def create_user(self, email, password, **kwargs):
+        return self._create_user(email, password, **kwargs)
 
     def create_superuser(self, email, password):
         kwargs = {
@@ -18,4 +18,9 @@ class UserManager(BaseUserManager):
             'is_staff': True,
         }
         return self._create_user(email, password, **kwargs)
+
+
+
+
+
 

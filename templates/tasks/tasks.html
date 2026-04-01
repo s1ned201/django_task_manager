@@ -4,20 +4,47 @@
 
 {% block content %}
 
+<style>
+.table-emerald thead {
+    background-color: #6c7aff;
+    color: white;
+}
 
-<table class="table">
+.table-emerald tbody tr:hover {
+    background-color: white;
+}
+
+.table-emerald td:hover,
+.table-emerald th:hover {
+    background-color: #6c7aff;
+}
+
+.table-emerald td,
+.table-emerald th {
+    transition: background-color 0.2s;
+}
+</style>
+
+<div class="container mt-4" style="max-width: 1000px;">
+
+<table class="table table-bordered table-striped text-center table-emerald">
   <thead>
     <tr>
       <th scope="col">Task Name</th>
+      <th scope="col">Assignee</th>
       <th scope="col">Tags</th>
       <th scope="col">Status</th>
       <th scope="col">Priority</th>
+      <th scope="col">Comments</th>
     </tr>
+
   </thead>
+
   <tbody>
   {% for task in tasks %}
     <tr>
       <td>{{ task.name}}</td>
+      <td>{{ "name:" }} {{ task.assignee.username}} {{ "/ email:" }} {{ task.assignee.email}}</td>
       <td>
         {% for tag in task.tags.all %}
         {{ tag.name}}
@@ -25,10 +52,17 @@
       </td>
       <td>{{ task.status}}</td>
       <td>{{ task.priority}}</td>
+      <td>
+        {% for comment in task.comments.all %}
+        {{ comment.message }}
+        {% empty %}
+          <span class="text-muted">Нет комментариев</span>
+        {% endfor %}
+      </td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
-
+</div>
 
 {% endblock %}

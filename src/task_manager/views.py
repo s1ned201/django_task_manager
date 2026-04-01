@@ -6,7 +6,11 @@ from task_manager.models import Tasks
 def tasks(request):
 
     context = {
-        'tasks': Tasks.objects.all()
+        'tasks':
+            Tasks.objects.
+            select_related("assignee").
+            prefetch_related("tags", "comments").
+            all()
     }
     return render(request, 'tasks.html', context=context)
 
