@@ -6,6 +6,7 @@ fake = Faker('en_US')
 
 """
 Команда для добавления пользователей
+(default=5  |  --users)
 """
 
 class Command(BaseCommand):
@@ -15,7 +16,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--users',
             type=int,
-            default=100
+            default=5
         )
 
     def handle(self, *args, **options):

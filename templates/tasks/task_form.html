@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<p> Issue creation form </p>
+
+<form action="{% url 'create_task' %}" method="POST">
+    <label>Creating tasks:</label>
+    {{ form | crispy }}
+    {% csrf_token %}
+    <input type="submit" value="OK">
+</form>
+
+{% endblock %}

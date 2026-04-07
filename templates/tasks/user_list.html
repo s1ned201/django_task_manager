@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Users list{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Пользователи</h1>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Имя пользователя</th>
+                        <th scope="col">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>
+                            {% if user.tasks_count > 0 %}
+                                <a href="{% url 'user_info' user.id %}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-eye"></i> Показать задачи и комментарии
+                                </a>
+                            {% else %}
+                                <button class="btn btn-sm btn-secondary" disabled>
+                                    <i class="bi bi-eye-slash"></i> Нет задач
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">Нет пользователей</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

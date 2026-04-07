@@ -61,7 +61,7 @@ class Tasks(BaseModel):
 
 
     class Meta:
-        ordering = ["-priority","-created_at"]
+        ordering = ["-created_at"]
         db_table = "tasks"
         verbose_name = "Задача"
         verbose_name_plural = "Задачи"

@@ -47,7 +47,7 @@
       <td>{{ "name:" }} {{ task.assignee.username}} {{ "/ email:" }} {{ task.assignee.email}}</td>
       <td>
         {% for tag in task.tags.all %}
-        {{ tag.name}}
+        {{ tag.name }}
         {% endfor %}
       </td>
       <td>{{ task.status}}</td>

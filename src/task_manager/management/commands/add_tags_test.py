@@ -6,6 +6,7 @@ fake = Faker('en_US')
 
 """
 Команда для добавления тегов
+(default=5  |  --tags)
 """
 
 class Command(BaseCommand):

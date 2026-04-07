@@ -5,7 +5,9 @@ from faker import Faker
 fake = Faker('en_US')
 
 """
-Команда для добавления проектов
+Команда для добавления проектов 
+(default=5  |  --projects)
+
 """
 
 class Command(BaseCommand):

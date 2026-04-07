@@ -9,6 +9,7 @@ fake = Faker('en_US')
 
 """
 Команда для добавления задач
+(default=5  |  --tasks)
 """
 
 class Command(BaseCommand):

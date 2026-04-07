@@ -5,6 +5,8 @@ from task_manager.models import Tasks, Tags, Projects, Comments
 
 """
 Команда для удаления всех данных
+--keep-users - Удалить все кроме пользователей
+--yes - Автоподтверждение
 """
 
 class Command(BaseCommand):
