@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     # app
-    'task_manager',
-    'account',
+    'task_manager.apps.TaskManagerConfig',
+    'account.apps.AccountConfig',
 
 ]
 

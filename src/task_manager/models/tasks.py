@@ -49,6 +49,7 @@ class Tasks(BaseModel):
         related_name='tasks',
         on_delete=models.CASCADE,
         null=True,
+        verbose_name='Проект'
     )
 
     assignee = models.ForeignKey(
@@ -57,6 +58,7 @@ class Tasks(BaseModel):
         blank=True,
         related_name='tasks',
         on_delete=models.SET_NULL,
+        verbose_name='Исполнитель'
     )
 
 
