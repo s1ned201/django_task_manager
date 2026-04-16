@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from debug_toolbar.toolbar import debug_toolbar_urls
+from django.conf.urls.static import static
+from config import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tasks/', include('task_manager.urls'))
-] + debug_toolbar_urls()
+] + debug_toolbar_urls() + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

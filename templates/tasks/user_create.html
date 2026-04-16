@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Создание пользователя{% endblock %}
+
+{% block content %}
+
+<style>
+    .form-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+    
+    .form-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+    }
+    
+    .form-card .card-body {
+        padding: 30px;
+    }
+    
+    .form-check-input:checked {
+        background-color: #667eea;
+        border-color: #667eea;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 10px 25px;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%);
+        transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        padding: 10px 25px;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+    
+    .divider {
+        border-top: 1px solid #e9ecef;
+        margin: 20px 0;
+        position: relative;
+    }
+    
+    .divider-text {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 0 15px;
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="bi bi-person-plus-fill"></i> {{ title }}
+                    </h3>
+                    <p class="mb-0 mt-2 opacity-75">
+                        Заполните информацию о новом пользователе
+                    </p>
+                </div>
+                
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Основная информация -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.username|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.email|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.first_name|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.last_name|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <!-- Пароли -->
+                        <div class="divider">
+                            <span class="divider-text">Безопасность</span>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.password|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.password_confirm|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <!-- Права доступа -->
+                        <div class="divider">
+                            <span class="divider-text">Права доступа</span>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ form.is_active|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.is_staff|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.is_superuser|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info mt-3">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Примечание:</strong>
+                            <ul class="mb-0 mt-1">
+                                <li><strong>Активен</strong> - пользователь может войти в систему</li>
+                                <li><strong>Персонал</strong> - доступ к админ-панели Django</li>
+                                <li><strong>Суперпользователь</strong> - все права в системе</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Кнопки -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'user_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> {{ button_text }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
