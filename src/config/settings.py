@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'crispy_forms',
     'crispy_bootstrap5',
+    'rest_framework',
+    'drf_spectacular',
     # app
     'task_manager.apps.TaskManagerConfig',
     'account.apps.AccountConfig',
@@ -151,3 +153,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # MEDIA
 MEDIA_URL = 'media/'
 MEDIA_ROOT = 'media_files'
+
+# CACHE
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# REST FRAMEWORK
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Task Tracker',
+    'DESCRIPTION': 'MY FIRST APIIII',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}

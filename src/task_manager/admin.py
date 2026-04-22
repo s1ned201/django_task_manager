@@ -93,6 +93,7 @@ class TasksAdmin(admin.ModelAdmin):
     )
     # exclude = ('is_reopened',)
     list_display = (
+        "id",
         "display_name",
         "status",
         "priority",
@@ -149,11 +150,11 @@ class ProjectsAdmin(admin.ModelAdmin):
     # readonly_fields = ("created_at",)
 
 class AttachmentsAdmin(admin.ModelAdmin):
-    list_display = ("name", "task", "display_photo", "photo")
+    list_display = ("name", "task", "display_file", "file")
     @admin.display(description="Превью")
-    def display_photo(self, instance):
-        if instance.photo:
-            return mark_safe(f"<img src='{instance.photo.url}' width='15%' />")
+    def display_file(self, instance):
+        if instance.file:
+            return mark_safe(f"<img src='{instance.file.url}' width='15%' />")
 
 
 

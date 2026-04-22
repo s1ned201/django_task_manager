@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from config.models import BaseModel
+from task_manager.managers import TaskManager
 
 
 class TaskStatus(models.TextChoices):
@@ -60,6 +61,8 @@ class Tasks(BaseModel):
         on_delete=models.SET_NULL,
         verbose_name='Исполнитель'
     )
+
+    objects = TaskManager()
 
 
     class Meta:

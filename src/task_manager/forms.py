@@ -203,4 +203,30 @@ class CommentForm(forms.ModelForm):
 class AttachmentForm(forms.ModelForm):
     class Meta:
         model = Attachments
-        fields = ['name', 'photo', 'task']
+        fields = ['name', 'file', 'task']
+        widgets = {
+            'task': forms.Select(attrs={'class': 'form-select'}),
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите название вложения'
+            }),
+            'file': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*,.pdf,.doc,.docx,.txt'
+            }),
+        }
+        labels = {
+            'task': 'Задача',
+            'name': 'Название',
+            'file': 'Файл',
+        }
+        help_texts = {
+            'file': 'Поддерживаемые форматы: JPG, PNG, GIF, PDF, DOC, DOCX, TXT. Максимальный размер: 10MB',
+        }
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+        if file:
+            if file.size > 10 * 1024 * 1024:
+                raise forms.ValidationError('Файл не должен превышать 10 МБ.')
+        return file

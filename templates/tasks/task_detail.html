@@ -64,9 +64,9 @@
                         <h5>📎 Вложения</h5>
                         <div class="row">
                             {% for attachment in task.attachments.all %}
-                                {% if attachment.photo %}
+                                {% if attachment.file %}
                                 <div class="col-md-4 mb-2">
-                                    <img src="{{ attachment.photo.url }}" class="img-fluid rounded border" alt="Attachment">
+                                    <img src="{{ attachment.file.url }}" class="img-fluid rounded border" alt="Attachment">
                                 </div>
                                 {% endif %}
                             {% endfor %}
