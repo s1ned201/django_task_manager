@@ -141,7 +141,7 @@ class TasksAdmin(admin.ModelAdmin):
 
 class ProjectsAdmin(admin.ModelAdmin):
     # fields = ('name', 'description')
-    exclude = ('owner',)
+    # exclude = ('owner',)
     inlines = (ProjectDetailsInLine,)
     # list_display = ("name", "status", "priority", "project", "assignee")
     # list_display_links = ("name")
