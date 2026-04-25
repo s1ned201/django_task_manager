@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import environ
 import os
+
+from django.conf.global_settings import AUTH_USER_MODEL
+
 from config.env import env, BASE_DIR
 
 # False if not in os.environ because of casting above
@@ -35,8 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'debug_toolbar',
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'rest_framework',
+    'drf_spectacular',
     # app
-    'task_manager',
+    'task_manager.apps.TaskManagerConfig',
+    'account.apps.AccountConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -44,9 +55,11 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -83,6 +96,7 @@ DATABASES = {
     },
 }
 
+AUTH_USER_MODEL = "account.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -102,6 +116,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Internal IP's
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -119,5 +143,35 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR.parent / "static/images",
+]
+STATIC_ROOT = BASE_DIR.parent / "static"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# MEDIA
+MEDIA_URL = 'media/'
+MEDIA_ROOT = 'media_files'
+
+# CACHE
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# REST FRAMEWORK
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Task Tracker',
+    'DESCRIPTION': 'MY FIRST APIIII',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}

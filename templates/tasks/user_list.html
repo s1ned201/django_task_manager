@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Users list{% endblock %}
+
+{% block content %}
+
+<style>
+    .table-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .table-card thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .table-card thead th {
+        padding: 15px 12px;
+        font-weight: 600;
+        border-bottom: none;
+    }
+
+    .table-card tbody tr {
+        transition: background-color 0.2s;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .table-card tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .table-card tbody td {
+        padding: 15px 12px;
+        vertical-align: middle;
+    }
+
+    .user-name-link {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+
+    .user-name-link:hover {
+        color: #764ba2;
+        text-decoration: underline;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        padding: 0;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .badge-count {
+        background-color: #e9ecef;
+        color: #495057;
+        font-weight: 500;
+        padding: 0.25rem 0.65rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+    }
+
+    .avatar-placeholder {
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6">
+            <i class="bi bi-people-fill"></i> Пользователи
+        </h1>
+        <a href="{% url 'user_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Создать пользователя
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-card mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Пользователь</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Имя пользователя</th>
+                    <th scope="col">Задачи</th>
+                    <th scope="col">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td style="width: 60px;">
+                        <span class="badge-count">{{ user.id }}</span>
+                    </td>
+
+                    <td style="width: 60px;">
+                        <div class="avatar-placeholder">
+                            {{ user.username|first|upper }}
+                        </div>
+                    </td>
+
+                    <td>
+                        <a href="mailto:{{ user.email }}" class="user-name-link">
+                            <i class="bi bi-envelope"></i> {{ user.email }}
+                        </a>
+                    </td>
+
+                    <td>
+                        <i class="bi bi-person-badge"></i> {{ user.username }}
+                        {% if user.is_superuser %}
+                            <span class="badge bg-danger ms-1">Admin</span>
+                        {% elif user.is_staff %}
+                            <span class="badge bg-warning ms-1">Staff</span>
+                        {% endif %}
+                     </td>
+
+                    <td style="width: 100px;">
+                        <span class="badge {% if user.tasks_count > 0 %}bg-primary{% else %}bg-secondary{% endif %}">
+                            <i class="bi bi-list-task"></i> {{ user.tasks_count }} задач
+                        </span>
+                     </td>
+
+                    <td style="width: 200px;">
+                        {% if user.tasks_count > 0 %}
+                            <a href="{% url 'user_info' user.id %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i> Задачи и комментарии
+                            </a>
+                        {% else %}
+                            <button class="btn btn-sm btn-secondary" disabled>
+                                <i class="bi bi-eye-slash"></i> Нет задач
+                            </button>
+                        {% endif %}
+                     </td>
+                 </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <i class="bi bi-people display-4 text-muted"></i>
+                        <p class="mt-3 mb-0 text-muted">Нет пользователей. Создайте первого пользователя!</p>
+                        <a href="{% url 'user_create' %}" class="btn btn-primary mt-3">Создать пользователя</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

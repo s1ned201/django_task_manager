@@ -4,25 +4,378 @@
 
 {% block content %}
 
+<style>
+    .table-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Task Name</th>
-      <th scope="col">Status</th>
-      <th scope="col">Priority</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for task in tasks %}
-    <tr>
-      <td>{{ task.task_name}}</td>
-      <td>{{ task.status}}</td>
-      <td>{{ task.priority}}</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
+    .table-card thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
 
+    .table-card thead th {
+        padding: 15px 12px;
+        font-weight: 600;
+        border-bottom: none;
+    }
 
+    .table-card tbody tr {
+        transition: background-color 0.2s;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .table-card tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .table-card tbody td {
+        padding: 15px 12px;
+        vertical-align: middle;
+    }
+
+    .badge-tag {
+        background-color: #e9ecef;
+        color: #495057;
+        font-weight: 500;
+        padding: 0.35rem 0.65rem;
+        margin: 2px;
+    }
+
+    .comment-text {
+        max-width: 200px;
+        max-height: 70px;
+        overflow-y: auto;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .comment-text::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .comment-text::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .comment-text::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .priority-high {
+        background-color: #dc3545 !important;
+    }
+
+    .priority-medium {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+    }
+
+    .priority-low {
+        background-color: #28a745 !important;
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+    }
+
+    .attachment-img {
+        max-height: 45px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .attachment-img:hover {
+        transform: scale(1.1);
+    }
+
+    .task-name-link {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+
+    .task-name-link:hover {
+        color: #764ba2;
+        text-decoration: underline;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        padding: 0;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    /* Стили для пагинации */
+    .pagination {
+        margin-top: 20px;
+        margin-bottom: 0;
+    }
+
+    .pagination .page-link {
+        color: #667eea;
+        border-radius: 8px;
+        margin: 0 3px;
+        border: none;
+        padding: 8px 14px;
+    }
+
+    .pagination .page-link:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .pagination .active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+    }
+
+    .pagination .disabled .page-link {
+        color: #adb5bd;
+        background-color: #f8f9fa;
+    }
+
+    .info-bar {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .info-bar .total-count {
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .info-bar .showing-info {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6">
+            <i class="bi bi-list-task"></i> Список задач
+        </h1>
+        <a href="{% url 'create_task' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Создать задачу
+        </a>
+    </div>
+
+    <!-- Информационная панель с количеством задач -->
+    <div class="info-bar">
+        <div class="total-count">
+            <i class="bi bi-database"></i>
+            Всего задач: <strong>{{ paginator.count }}</strong>
+        </div>
+        <div class="showing-info">
+            <i class="bi bi-eye"></i>
+            Показано:
+            {% if page_obj %}
+                {{ page_obj.start_index }} - {{ page_obj.end_index }} из {{ paginator.count }}
+            {% else %}
+                0 из 0
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-card mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">Task Name</th>
+                    <th scope="col">Assignee</th>
+                    <th scope="col">Tags</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Priority</th>
+                    <th scope="col">Comments</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in page_obj %}
+                <tr>
+                    <td style="min-width: 180px;">
+                        <a href="{% url 'task_detail' task.id %}" class="task-name-link">
+                            {{ task.name }}
+                        </a>
+                    </td>
+
+                    <td style="min-width: 150px;">
+                        {% if task.assignee %}
+                            <strong>{{ task.assignee.username }}</strong><br>
+                            <small class="text-muted">{{ task.assignee.email|truncatechars:20 }}</small>
+                        {% else %}
+                            <span class="text-muted">Не назначен</span>
+                        {% endif %}
+                    </td>
+
+                    <td style="min-width: 120px;">
+                        {% for tag in task.tags.all %}
+                            <span class="badge badge-tag">{{ tag.name }}</span>
+                        {% empty %}
+                            <span class="text-muted">—</span>
+                        {% endfor %}
+                    </td>
+
+                    <td style="min-width: 100px;">
+                        <span class="badge bg-primary status-badge">{{ task.get_status_display }}</span>
+                    </td>
+
+                    <td style="min-width: 80px;">
+                        <span class="badge {% if task.priority >= 8 %}priority-high{% elif task.priority >= 5 %}priority-medium{% else %}priority-low{% endif %} status-badge">
+                            {{ task.priority }}
+                        </span>
+                    </td>
+
+                    <td style="min-width: 200px;">
+                        {% with task.comments.all as comments %}
+                            {% if comments %}
+                                <div class="comment-text">
+                                    {% for comment in comments|slice:":2" %}
+                                        <div class="mb-1">
+                                            <strong>{{ comment.user.username }}:</strong>
+                                            {{ comment.message|truncatechars:25 }}
+                                        </div>
+                                    {% endfor %}
+                                    {% if comments|length > 2 %}
+                                        <small class="text-muted">+ ещё {{ comments|length|add:"-2" }}</small>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Нет комментариев</span>
+                            {% endif %}
+                            <div class="mt-2">
+                                <a href="{% url 'add_comment' task.id %}" class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-plus-circle"></i> Добавить
+                                </a>
+                            </div>
+                        {% endwith %}
+                    </td>
+
+                    <td style="min-width: 100px;">
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'edit_task_form' task.id %}" class="btn btn-sm btn-warning" title="Редактировать">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-info" title="Подробнее">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <i class="bi bi-inbox display-4 text-muted"></i>
+                        <p class="mt-3 mb-0 text-muted">Нет задач. Создайте первую задачу!</p>
+                        <a href="{% url 'create_task' %}" class="btn btn-primary mt-3">Создать задачу</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Пагинация -->
+    {% if page_obj and page_obj.paginator.num_pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- Первая страница -->
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" title="Первая страница">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
+                </li>
+            {% endif %}
+
+            <!-- Предыдущая страница -->
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" title="Предыдущая страница">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+                </li>
+            {% endif %}
+
+            <!-- Номера страниц -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% elif num == page_obj.number|add:'-4' or num == page_obj.number|add:'4' %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Следующая страница -->
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" title="Следующая страница">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+                </li>
+            {% endif %}
+
+            <!-- Последняя страница -->
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" title="Последняя страница">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
 {% endblock %}

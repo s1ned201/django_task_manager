@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Список вложений{% endblock %}
+
+{% block content %}
+<style>
+    .attachment-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .attachment-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .preview-container {
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    .filter-bar {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px 20px;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6">
+            <i class="bi bi-paperclip"></i> Вложения
+        </h1>
+        <a href="{% url 'create_attachment' %}" class="btn btn-primary">
+            <i class="bi bi-upload"></i> Загрузить файл
+        </a>
+    </div>
+    
+    <!-- Фильтр по задаче -->
+    <div class="filter-bar mb-4">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Фильтр по задаче</label>
+                <select name="task" class="form-select" onchange="this.form.submit()">
+                    <option value="all">Все задачи</option>
+                    {% for task in tasks %}
+                        <option value="{{ task.id }}" {% if selected_task|stringformat:"s" == task.id|stringformat:"s" %}selected{% endif %}>
+                            {{ task.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Всего вложений</label>
+                <p class="form-control-static fw-bold text-primary">{{ total_count }}</p>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Список вложений -->
+    <div class="row">
+        {% for attachment in page_obj %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card attachment-card h-100 shadow-sm">
+                <div class="preview-container p-3">
+                    {{ attachment.preview|safe }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ attachment.name }}</h5>
+                    <p class="card-text small text-muted">
+                        <i class="bi bi-folder"></i> {{ attachment.task.name }}<br>
+                        <i class="bi bi-calendar"></i> {{ attachment.uploaded_at|date:"d.m.Y H:i" }}<br>
+                        <i class="bi bi-database"></i> {{ attachment.file_size|filesizeformat }}
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="btn-group w-100">
+                        <a href="{{ attachment.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="bi bi-eye"></i> Просмотр
+                        </a>
+                        <a href="{% url 'delete_attachment' attachment.id %}" 
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Удалить вложение «{{ attachment.name }}»?')">
+                            <i class="bi bi-trash"></i> Удалить
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center py-5">
+                <i class="bi bi-inbox display-4"></i>
+                <p class="mt-3 mb-0">Нет загруженных вложений</p>
+                <a href="{% url 'create_attachment' %}" class="btn btn-primary mt-3">Загрузить файл</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Пагинация -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1&task={{ selected_task }}">&laquo; Первая</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&task={{ selected_task }}">Назад</a></li>
+            {% endif %}
+            
+            <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+            
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&task={{ selected_task }}">Вперёд</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&task={{ selected_task }}">Последняя &raquo;</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

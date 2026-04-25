@@ -1,0 +1,32 @@
+1. Tasks.objects.values("status").annotate(count=Count('id')).order_by('-count')
+
+2. Tasks.objects.values('assignee__username', 'assignee__email').annotate(task_count=Count('id')).order_by('-task_count').first()
+
+3. Tasks.objects.annotate(comment_count=Count('comments')).values('id', 'name', 'comment_count').order_by('-comment_count')
+
+4. Tasks.objects.annotate(comment_count=Count('comments')).filter(comment_count__gt=3).values('id', 'name', 'comment_count')
+
+5. Tasks.objects.values('assignee__username').annotate(avg_priority=Avg('priority')).order_by('-avg_priority')
+
+6. Tags.objects.annotate(total_priority=Sum('tasks__priority')).values('name', 'total_priority').order_by('-total_priority')
+
+7. Tasks.objects.annotate( comment_count=Count('comments'),tag_count=Count('tags')).filter(comment_count__gt=F('tag_count')).values('id', 'name', 'comment_count', 'tag_count')
+
+8. User.objects.annotate(total_comments=Count('tasks__comments')).order_by('-total_comments').values('username', 'email', 'total_comments')[:3]
+
+9.
+tasks = Tasks.objects.raw("""
+    ...:         SELECT 
+    ...:             t.id,
+    ...:             t.name,
+    ...:             COUNT(c.id) as comment_count
+    ...:         FROM tasks t
+    ...:         LEFT JOIN comments c ON c.task_id = t.id
+    ...:         GROUP BY t.id, t.name
+    ...:         ORDER BY comment_count DESC
+    ...:         LIMIT 10;
+    ...:     """)
+
+
+10. avg_priority = Tasks.objects.aggregate(avg=Avg('priority'))['avg'] or 0
+tasks = Tasks.objects.annotate(comment_count=Count('comments')).filter(comment_count__gt=5,priority__gt=avg_priority).values('id', 'name', 'priority', 'comment_count').order_by('-priority')

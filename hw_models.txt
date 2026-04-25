@@ -1,0 +1,25 @@
+4)
+ prjct = Projects.objects.get(name="Django")
+asign = User.objects.get(email="admin@admin.com")
+Tasks.objects.create(name="12345",priority="3",description="123",project=prjct,assignee=asign)
+
+5)
+Task.objects.filter(comments__isnull=False)
+
+6)
+Projects.objects.filter(project_detail__isnull=False)
+
+7)
+Tasks.objects.filter(id=3)
+
+8)
+tag = Tags.objects.get(name="Django")
+Tasks.objects.filter(tags=Django)
+
+9)
+Comments.objects.filter(user_id=2,task__tags__name="Django")
+
+10)
+Projects.objects.filter(tasks__status="CANCELED")
+
+11)
