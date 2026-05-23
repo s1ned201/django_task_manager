@@ -14,5 +14,5 @@ djangorestframework==3.17.1
 django-filter==25.2
 drf-spectacular==0.29.0
 djangorestframework-stubs==3.16.9
-
+djangorestframework_simplejwt==5.5.1
 

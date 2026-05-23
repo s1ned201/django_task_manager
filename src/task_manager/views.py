@@ -1,4 +1,6 @@
 from os import name
+
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.contrib import messages
@@ -35,8 +37,10 @@ from task_manager.models.tasks import TaskStatus
 #     return render(request, 'tasks.html', context=context)
 
 # @cache_page(60*30)
-class TaskView(ListView):
+class TaskView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'tasks.html'
+    permission_required = 'task_manager.view_task'
+    login_url = '/admin/login'
     model = Tasks
     paginate_by = 10
     paginator_class = Paginator

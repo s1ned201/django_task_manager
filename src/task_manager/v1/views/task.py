@@ -2,6 +2,9 @@ from django.http import HttpResponse, JsonResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from drf_spectacular.utils import extend_schema
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAdminUser
+
+from config.pagination import CustomPagination
 from task_manager.models import Tasks
 from task_manager.v1.serializers import TaskSerializer
 from rest_framework import status, mixins, generics
@@ -9,6 +12,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from task_manager.v1.serializers.task import TaskQueryFilterSerializer
 
 
 # @api_view(['GET', 'POST'])
@@ -95,14 +99,26 @@ class TaskListAPIView(
 
     queryset = Tasks.objects.all()
     serializer_class = TaskSerializer
+    # permission_classes = [IsAdminUser]
+    pagination_class = CustomPagination
+    filterset_class = TaskQueryFilterSerializer
+
+    def get_queryset(self):
+        name = self.request.query_params.get('name')
+        if name is not None:
+            queryset = self.queryset.filter(name=name)
+        return self.queryset
 
     @extend_schema(
+        summary='Get all tasks',
+        request=TaskQueryFilterSerializer,
         responses={200: TaskSerializer}
     )
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     @extend_schema(
+        summary='Create task',
         request=TaskSerializer,
         responses={201: TaskSerializer}
     )
@@ -120,17 +136,24 @@ class TaskDetailAPIView(
     serializer_class = TaskSerializer
 
     @extend_schema(
+        summary='Get a specific task',
         responses={200: TaskSerializer}
     )
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
     @extend_schema(
+        summary='Update a task',
         request=TaskSerializer,
         responses={200: TaskSerializer}
     )
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
+    @extend_schema(
+        summary='Delete a task',
+        request=TaskSerializer,
+        responses={200: TaskSerializer}
+    )
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)

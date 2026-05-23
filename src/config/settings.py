@@ -9,12 +9,12 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 import environ
 import os
 
-from django.conf.global_settings import AUTH_USER_MODEL
+from django.conf.global_settings import AUTH_USER_MODEL, LOGIN_URL
 
 from config.env import env, BASE_DIR
 
@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'rest_framework',
     'drf_spectacular',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'django_filters',
     # app
     'task_manager.apps.TaskManagerConfig',
     'account.apps.AccountConfig',
@@ -57,6 +60,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.LoginRequiredMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
@@ -116,6 +120,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = 'admin/login/'
+
 # Internal IP's
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -167,11 +173,39 @@ CACHES = {
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
 }
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Task Tracker',
-    'DESCRIPTION': 'MY FIRST APIIII',
+    'DESCRIPTION': 'Track your tasks',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+}
+
+
+# JWT
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=int(env("ACCESS_TOKEN_LIFETIME_MINUTES"))
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        minutes=int(env("REFRESH_TOKEN_LIFETIME_MINUTES"))
+    ),
+    "ALGORITHM": env("JWT_ALGORITHM"),
+    "SIGNING_KEY": env("SECRET_KEY"),
+    "AUTH_HEADER_TYPES": ("JWT",),
 }
