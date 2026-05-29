@@ -130,6 +130,10 @@ class UserCreateForm(forms.ModelForm):
             user.save()
         return user
 
+    def clean(self):
+        cleaned_data = super().clean()
+        return self.conf_pass()
+
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Tasks
